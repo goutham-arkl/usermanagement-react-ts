@@ -1,4 +1,5 @@
 import * as yup from 'yup';
+const mobileRegex = /^[6789]\d{9}$/;
 
 export const personalDataschema = yup.object({
     name: yup.string().required('Name is required').min(3, 'Name must be at least 3 characters'),
@@ -18,6 +19,9 @@ export const personalDataschema = yup.object({
       .number()
       .required('Mobile is required')
       .positive('Mobile must be a positive number')
+      .test('is-indian-mobile', 'Mobile number should be 10 digits and a vailid indian number', (value: number | undefined) => {
+        return mobileRegex.test(value?.toString() || '');
+      })
       .transform((value, originalValue) => (originalValue === '' ? undefined : value))
       .nullable(),
   

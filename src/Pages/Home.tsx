@@ -25,7 +25,6 @@ const Home = () => {
         setSearchTerm(newSearchTerm);
       };
   const users = useAppSelector((state) => state.user.user.users);
-  console.log(users);
 
   const columns: TableColumn<User>[] = [
     {
@@ -105,11 +104,11 @@ const Home = () => {
     >
       
       <div className='container'>
-      <div className='header'>
+      {users.length>0 &&<div className='header'>
         <h1>Users</h1>
         <Link to='/adduser' className='add'>Add User</Link>
-      </div>
-       <DataTable
+      </div>}
+       {users.length > 0 ? <DataTable
         columns={columns}
         data={filteredUsers}
         pagination
@@ -129,6 +128,12 @@ const Home = () => {
         persistTableHead
         pointerOnHover
       />
+      :
+      <div className='no-user'>
+      <h3>Currently we don't have any users,so you can add users </h3>
+      <Link to='/adduser' className='add'>Add User</Link>
+      </div>
+      }
       </div>
 
     </motion.div>
