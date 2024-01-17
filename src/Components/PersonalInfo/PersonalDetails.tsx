@@ -30,11 +30,13 @@ const PersonalDetails = ({ setPersonalDetails,setStep }: { setPersonalDetails: (
     },
     resolver: yupResolver(personalDataschema) as any,
   });
-  const { register, handleSubmit } = form;
+
+  const { register, handleSubmit,watch } = form;
+  const Id = watch('idType');
   const { errors } = form.formState;
 
   const onSubmit = (data: FormValues, event?: React.BaseSyntheticEvent) => {
-    console.log('submitted', data);
+    event?.preventDefault();
     setPersonalDetails(data);
     setStep(2);
   };
@@ -115,11 +117,12 @@ const PersonalDetails = ({ setPersonalDetails,setStep }: { setPersonalDetails: (
                 </FormControl>
             <TextField
               id="idNumber"
+              disabled={Id!=='' ? false : true}
               error={!!errors.idNumber}
               helperText={errors.idNumber?.message}
               sx={{ width: '30%' }}
               label="Enter ID Number"
-              type="text"
+              type={Id==="aadhar"?"number":"text"}
               variant="standard"
               {...register('idNumber')}
             />
