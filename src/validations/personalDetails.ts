@@ -32,28 +32,45 @@ export const personalDataschema = yup.object({
     .required('ID Number is required')
     .typeError('ID Number must be a number')
     .min(4, 'ID Number must be at least 4 characters')
-    .when('idType', {
-      is: 'aadhar',
-      then: (schema) =>
-        schema
-          .test('is-valid-aadhar', 'Invalid Aadhar ID', (value) => {
-            const isValidLength = value.toString().length === 12;
-            const doesNotStartWithZeroOrOne = /^[2-9]\d{11}$/.test(value.toString());
-  
-            if (!isValidLength) {
-              throw new yup.ValidationError('Aadhar ID must be 12 digits long', value, 'idNumber');
-            }
-  
-            if (!doesNotStartWithZeroOrOne) {
-              throw new yup.ValidationError('Aadhar ID should not start with 0 or 1', value, 'idNumber');
-            }
-  
-            return true;
-          }),
-      otherwise: (schema) => schema
+    .test({
+      name: 'is-valid-id',
+      test: function(value) {
+        const idType = this.resolve(yup.ref('idType'));
+        
+        if (idType === 'aadhar') {
+          const isValidLength = value.toString().length === 12;
+          const doesNotStartWithZeroOrOne = /^[2-9]\d{11}$/.test(value.toString());
+
+          if (!isValidLength) {
+            throw this.createError({
+              path: 'idNumber',
+              message: 'Aadhar ID must be 12 digits long',
+            });
+          }
+
+          if (!doesNotStartWithZeroOrOne) {
+            throw this.createError({
+              path: 'idNumber',
+              message: 'Aadhar ID should not start with 0 or 1',
+            });
+          }
+        } else if (idType === 'pan') {
+          const isValidPan = /^[A-Z]{5}[0-9]{4}[A-Z]$/.test(value.toString());
+
+          if (!isValidPan) {
+            throw this.createError({
+              path: 'idNumber',
+              message: 'Invalid PAN ID',
+            });
+          }
+        }
+
+        return true;
+      },
     })
     .transform((value, originalValue) => (originalValue === '' ? undefined : value))
     .nullable(),
+
   
 
 
