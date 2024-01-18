@@ -10,6 +10,7 @@ export const personalDataschema = yup.object({
       .typeError('Age must be a number')
       .positive('Age must be a positive number')
       .min(1, 'Age must be at least 1 year')
+      .max(100, 'Age must be at most 100 years')
       .transform((value, originalValue) => (originalValue === '' ? undefined : value))
       .nullable(),
   
